@@ -1,0 +1,16 @@
+
+###
+POST http://127.0.0.1:5000/ICAN/schedule_pass/
+content-type: application/json
+
+{
+    "start_time": "2025-01-16T00:29:44",
+    "end_time": "2025-01-16T00:35:44",
+    "state": "telemetry_busy",
+    "mission": "Research C"
+}
+###
+GET http://127.0.0.1:5000/ICAN/query_busy_times/?start_time=2025-01-15T11:48:29&end_time=2025-01-17T13:18:29
+
+###
+GET http://127.0.0.1:5000/ICAN/query_state_at/2025-01-16T00:29:50
