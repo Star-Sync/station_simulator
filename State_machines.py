@@ -42,19 +42,19 @@ class TimeBasedStateMachine:
         """Query what the state and mission will be at a specific time."""
         current_state = 'free'
         current_mission = "Idle"
-        
+
         for start_time, end_time, state, mission in self.scheduled_changes:
             if start_time <= query_time <= end_time:
                 current_state = state
                 current_mission = mission
                 break
-        
+
         return current_state, current_mission
 
     def get_busy_times_in_range(self, start_range, end_range):
         """Return all busy time periods in the given time range."""
         busy_times = []
-        
+
         # Loop through the scheduled changes and check if the state is busy in the given range
         for start_time, end_time, state, _ in self.scheduled_changes:
             # Check if the state is busy and if it overlaps with the time range
@@ -63,7 +63,7 @@ class TimeBasedStateMachine:
                 overlap_end = min(end_time, end_range)
                 if overlap_start < overlap_end:  # Ensure there is an overlap
                     busy_times.append((overlap_start, overlap_end, state))
-        
+
         return busy_times
 
 
@@ -92,16 +92,16 @@ def schedule_pass(machine_name):
         if machine_name not in state_machines:
             return jsonify({"error": f"{machine_name} not a valid station"}), 404
         machine = state_machines[machine_name]
-        
+
         # Parse the incoming JSON data
         data = request.get_json()
-        
+
         # Create StateChangeRequest from the incoming data
         state_change = StateChangeRequest(**data)
 
         # Schedule the state change
         machine.schedule_pass(state_change.start_time, state_change.end_time, state_change.state, state_change.mission)
-        
+
         return jsonify({
             "message": f"Scheduled pass at {machine_name} to {state_change.state} from {state_change.start_time} to {state_change.end_time} with mission {state_change.mission}"
         }), 200
@@ -120,10 +120,10 @@ def query_state_at(machine_name, query_time):
         if machine_name not in state_machines:
             return jsonify({"error": f"{machine_name} not a valid station"}), 404
         machine = state_machines[machine_name]
-        
+
         # Parse the query time from the URL parameter
         query_time_obj = datetime.strptime(query_time, "%Y-%m-%dT%H:%M:%S")
-        
+
         # Query the state at that time
         state, mission = machine.query_state_at(query_time_obj)
         return jsonify({"state": state, "mission": mission}), 200
@@ -169,4 +169,4 @@ def query_busy_times(machine_name):
 
 if __name__ == '__main__':
     # Run the Flask application
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

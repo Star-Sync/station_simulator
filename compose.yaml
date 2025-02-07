@@ -1,0 +1,20 @@
+name: station_simulator
+
+services:
+    state_machines:
+        build: .
+        # we use port 5k for a different service in ss-deploy
+        ports:
+            - "5100:5000"
+        volumes:
+            - .:/app
+        networks:
+            - star-sync
+
+networks:
+    # assuming that the network is already created (from ss-deploy)
+    star-sync:
+        driver: bridge
+        name: star-sync_star-sync
+        external: true
+
